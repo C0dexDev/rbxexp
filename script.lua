@@ -416,7 +416,6 @@ local function GORDBPR_fake_script() -- MainFrame.MainHandler
 		Root.CFrame = CFrame.new(OgPos)
 	end
 	--//Main Code
-    SetStatus("Ready!")
 	Gui.StartButton.MouseButton1Click:Connect(function()
 		if stealing then return end
 		StealBest()
