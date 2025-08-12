@@ -1,0 +1,395 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local SL = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+local UICorner = Instance.new("UICorner")
+local Title = Instance.new("TextLabel")
+local Container = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local Button = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+local Selected = Instance.new("TextLabel")
+local Template = Instance.new("Frame")
+local InnerFrame = Instance.new("Frame")
+local UICorner_3 = Instance.new("UICorner")
+local TextButton = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local PlayerName = Instance.new("TextLabel")
+
+--Properties:
+
+SL.Name = "SL"
+SL.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+SL.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+SL.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = SL
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(76, 76, 76)
+MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.513924003, 0, 0.543269217, 0)
+MainFrame.Size = UDim2.new(0, 183, 0, 242)
+
+UIAspectRatioConstraint.Parent = MainFrame
+UIAspectRatioConstraint.AspectRatio = 0.800
+
+UICorner.Parent = MainFrame
+
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.AnchorPoint = Vector2.new(0.5, 0.5)
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.000
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(0.497222215, 0, 0.0777777806, 0)
+Title.Size = UDim2.new(0, 125, 0, 28)
+Title.Font = Enum.Font.SourceSansBold
+Title.Text = "DEATH NOTE"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextSize = 14.000
+Title.TextWrapped = true
+
+Container.Name = "Container"
+Container.Parent = MainFrame
+Container.Active = true
+Container.AnchorPoint = Vector2.new(0.5, 0.5)
+Container.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Container.BackgroundTransparency = 1.000
+Container.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Container.BorderSizePixel = 0
+Container.Position = UDim2.new(0.5, 0, 0.402664006, 0)
+Container.Size = UDim2.new(1, 0, 0.49421677, 0)
+Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+Container.ScrollBarThickness = 10
+
+UIListLayout.Parent = Container
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+Button.Name = "Button"
+Button.Parent = MainFrame
+Button.AnchorPoint = Vector2.new(0.5, 0.5)
+Button.BackgroundColor3 = Color3.fromRGB(89, 255, 0)
+Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Button.BorderSizePixel = 0
+Button.Position = UDim2.new(0.49444443, 0, 0.902777791, 0)
+Button.Size = UDim2.new(0.48888889, 0, 0.127777785, 0)
+Button.Font = Enum.Font.SourceSansBold
+Button.Text = "KILL"
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.TextScaled = true
+Button.TextSize = 14.000
+Button.TextWrapped = true
+
+UICorner_2.Parent = Button
+
+Selected.Name = "Selected"
+Selected.Parent = MainFrame
+Selected.AnchorPoint = Vector2.new(0.5, 0.5)
+Selected.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Selected.BackgroundTransparency = 1.000
+Selected.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Selected.BorderSizePixel = 0
+Selected.Position = UDim2.new(0.502641201, 0, 0.751001894, 0)
+Selected.Size = UDim2.new(0, 173, 0, 28)
+Selected.Font = Enum.Font.SourceSans
+Selected.Text = "No player selected"
+Selected.TextColor3 = Color3.fromRGB(255, 255, 255)
+Selected.TextScaled = true
+Selected.TextSize = 14.000
+Selected.TextWrapped = true
+
+Template.Name = "Template"
+Template.Parent = MainFrame
+Template.AnchorPoint = Vector2.new(0.5, 0.5)
+Template.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Template.BackgroundTransparency = 1.000
+Template.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Template.BorderSizePixel = 0
+Template.Position = UDim2.new(0.5, 0, 0.148712516, 0)
+Template.Size = UDim2.new(1, 0, 0.297425032, 0)
+Template.Visible = false
+
+InnerFrame.Name = "InnerFrame"
+InnerFrame.Parent = Template
+InnerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+InnerFrame.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
+InnerFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+InnerFrame.BorderSizePixel = 0
+InnerFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+InnerFrame.Size = UDim2.new(0.961111128, 0, 0.949999869, 0)
+
+UICorner_3.Parent = InnerFrame
+
+TextButton.Parent = InnerFrame
+TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 1.000
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.5, 0, 0.5, 0)
+TextButton.Size = UDim2.new(1, 0, 1, 0)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = ""
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.TextSize = 14.000
+
+UICorner_4.Parent = TextButton
+
+PlayerName.Name = "PlayerName"
+PlayerName.Parent = InnerFrame
+PlayerName.AnchorPoint = Vector2.new(0.5, 0.5)
+PlayerName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+PlayerName.BackgroundTransparency = 1.000
+PlayerName.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlayerName.BorderSizePixel = 0
+PlayerName.Position = UDim2.new(0.5, 0, 0.5, 0)
+PlayerName.Size = UDim2.new(0, 173, 0, 22)
+PlayerName.Font = Enum.Font.Arial
+PlayerName.Text = "C0dexDev"
+PlayerName.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerName.TextScaled = true
+PlayerName.TextSize = 14.000
+PlayerName.TextWrapped = true
+
+-- Scripts:
+
+local function WOOXYKX_fake_script() -- MainFrame.Handler 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	--//Variables
+	local PlayerService = game:GetService("Players")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	
+	local RemoteEvents = {
+		Attack = ReplicatedStorage:WaitForChild("AttackHandlerRemoteEvent"),
+		AntiLatch = ReplicatedStorage:WaitForChild("LatchedPlayersNotifyRemoteEvent"),
+		Respawn = ReplicatedStorage:WaitForChild("SpawnAsCharacterRemoteFunction"),
+		SaveStats = ReplicatedStorage:WaitForChild("SaveCharacterStatsRemoteEvent"),
+		Ragdoll = ReplicatedStorage:WaitForChild("TrampleDamageHandlerRemoteEvent"),
+		PounceAttack = ReplicatedStorage:WaitForChild("SpecialAttackRemoteEvent_PounceAttack"),
+	}
+	 
+	local Gui = PlayerService.LocalPlayer.PlayerGui:WaitForChild("SL")
+	local MainFrame = Gui:WaitForChild("MainFrame")
+	local Container = MainFrame.Container
+	local Template = MainFrame.Template
+	local Button = MainFrame.Button
+	local SelectedLabel = MainFrame.Selected
+	
+	local DefaultTemplateColor = Template.BackgroundColor3
+	local DefaultButtonColor = Button.BackgroundColor3
+	
+	local conns = {}
+	local selected = nil
+	local killing = false
+	local cancel = false
+	--//Functions
+	function GetCharacter()
+		return PlayerService.LocalPlayer.Character
+	end
+	function GetCharacterDisplayName()
+		local character = GetCharacter()
+		if not character then return nil end
+		local head = character:FindFirstChild("Head")
+		if not head then return nil end
+		local nameGui = head:FindFirstChild("CharacterNameBillboardGui")
+		if not nameGui then return nil end
+		local textLabel = nameGui:FindFirstChild("TextLabel")
+		if not textLabel then return nil end
+		return textLabel.Text
+	end
+	function RespawnPlayer()
+		local displayName = GetCharacterDisplayName()
+		if not displayName then
+			warn("Cant respawn.")
+			return
+		end
+		print("Respawning!")
+		RemoteEvents.Respawn:InvokeServer(displayName)
+	end
+	--//Main Code
+	Button.MouseButton1Down:Connect(function()
+		if killing then 
+			if not cancel then cancel = true end
+			return
+		end
+		if selected == nil then return end
+		killing = true
+		cancel = false
+		local char = selected.Character
+		local localChar = PlayerService.LocalPlayer.Character
+		if not localChar then
+			warn("Failed to get local player's character.")
+			killing = false
+			return
+		end
+		if not char then
+			warn("Failed to get selected player's character.")
+			killing = false
+			return
+		end
+		local hum = char.Humanoid
+		if not hum then
+			warn("Failed to get selected player's humanoid.")
+			killing = false
+			return
+		end
+		local ragdollColliders = char:FindFirstChild("RagdollColliderParts")
+		if not ragdollColliders then
+			warn("Failed to get selected player's ragdoll colliders.")
+			killing = false
+			return
+		end
+		local firstPart = ragdollColliders:FindFirstChildWhichIsA("BasePart")
+		if not firstPart then
+			warn("Failed to get selected player's first part.")
+			killing = false
+			return
+		end
+		repeat
+			task.wait(.1)
+			RemoteEvents.PounceAttack:FireServer(hum,firstPart)
+			RemoteEvents.Ragdoll:FireServer(hum,firstPart)
+			RemoteEvents.Attack:FireServer(hum)
+		until cancel
+			or not selected
+			or not selected:IsDescendantOf(PlayerService)
+			or not char:IsDescendantOf(workspace)
+			or not hum
+			or not ragdollColliders
+			or not localChar:IsDescendantOf(workspace)
+			or not localChar:FindFirstChild("Humanoid")
+			or localChar.Humanoid.Health <= 0
+		RespawnPlayer()
+		cancel = false
+		killing = false
+		selected = nil
+	end)
+	task.spawn(function()
+		while task.wait() do
+			for _,player in PlayerService:GetPlayers() do
+				local PlayerFrame = Container:FindFirstChild(player.Name)
+				if PlayerFrame then
+					local char = player.Character
+					if not char then
+						if selected == player then
+							selected = nil
+						end
+						pcall(function()
+							conns[player]:Disconnect()
+							conns[player] = nil
+						end)
+						PlayerFrame:Destroy()
+					end
+				else
+					if player == PlayerService.LocalPlayer then continue end
+					local char = player.Character
+					if not char then continue end
+					local newFrame = Template:Clone()
+					newFrame.InnerFrame.PlayerName.Text = player.Name.." ("..player.DisplayName..")"
+					newFrame.Parent = Container
+					newFrame.Visible = true
+					newFrame.Name = player.Name
+					conns[player.Name] = newFrame.InnerFrame.TextButton.MouseButton1Click:Connect(function()
+						selected = player
+					end)
+					print("ADDED "..player.Name)
+				end
+			end
+		end
+	end)
+	task.spawn(function()
+		while task.wait() do
+			if selected ~= nil and not selected:IsDescendantOf(PlayerService) then
+				selected = nil
+			end
+			if selected ~= nil and (selected.Character == nil or selected.Character.Humanoid == nil or selected.Character.Humanoid.Health <= 0) then
+				selected = nil
+			end
+			if selected == nil then
+				Button.Visible = true
+				SelectedLabel.Text = "No player selected!"
+				for _,c in Container:GetChildren() do
+					if c:IsA("Frame") then
+						c.BackgroundColor3 = DefaultTemplateColor
+					end
+				end
+				continue
+			end
+			SelectedLabel.Text = selected.Name.." ("..selected.DisplayName..")"
+			for _,c in Container:GetChildren() do
+				if c:IsA("Frame") then
+					if c.Name == selected.Name then
+						c.BackgroundColor3 = Color3.new(0.184314, 1, 0)
+					else
+						c.BackgroundColor3 = DefaultTemplateColor
+					end
+				end
+			end
+			Button.Visible = true
+		end
+	end)
+	task.spawn(function()
+		while task.wait() do
+			if killing then
+				Button.BackgroundColor3 = Color3.new(1, 0, 0.0156863)
+				Button.Text = "CANCEL"
+			else
+				Button.BackgroundColor3 = DefaultButtonColor
+				Button.Text = "KILL"
+			end
+		end
+	end)
+	
+end
+coroutine.wrap(WOOXYKX_fake_script)()
+local function RAWJ_fake_script() -- MainFrame.Draggable 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	local UserInputService = game:GetService("UserInputService")
+	
+	local frame = script.Parent
+	local dragging = false
+	local dragStart
+	local startPos
+	
+	local function update(input)
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y
+		)
+	end
+	
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+	
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragging then
+				update(input)
+			end
+		end
+	end)
+	
+end
+coroutine.wrap(RAWJ_fake_script)()
