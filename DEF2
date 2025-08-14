@@ -1,0 +1,469 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local SL = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+local UICorner = Instance.new("UICorner")
+local Title = Instance.new("TextLabel")
+local Container = Instance.new("ScrollingFrame")
+local UIListLayout = Instance.new("UIListLayout")
+local Button = Instance.new("TextButton")
+local UICorner_2 = Instance.new("UICorner")
+local Selected = Instance.new("TextLabel")
+local Template = Instance.new("Frame")
+local InnerFrame = Instance.new("Frame")
+local UICorner_3 = Instance.new("UICorner")
+local TextButton = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local PlayerName = Instance.new("TextLabel")
+
+--Properties:
+
+SL.Name = "SL"
+SL.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+SL.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+SL.ResetOnSpawn = false
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = SL
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.BackgroundColor3 = Color3.fromRGB(76, 76, 76)
+MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.919831216, 0, 0.517628193, 0)
+MainFrame.Size = UDim2.new(0.192827001, 0, 0.352764428, 0)
+
+UIAspectRatioConstraint.Parent = MainFrame
+UIAspectRatioConstraint.AspectRatio = 0.800
+
+UICorner.Parent = MainFrame
+
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.AnchorPoint = Vector2.new(0.5, 0.5)
+Title.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1.000
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(0.500002623, 0, 0.0777777582, 0)
+Title.Size = UDim2.new(0.999994099, 0, 0.100000001, 0)
+Title.Font = Enum.Font.SourceSansBold
+Title.Text = "DEATH NOTE"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextScaled = true
+Title.TextSize = 14.000
+Title.TextWrapped = true
+
+Container.Name = "Container"
+Container.Parent = MainFrame
+Container.Active = true
+Container.AnchorPoint = Vector2.new(0.5, 0.5)
+Container.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Container.BackgroundTransparency = 1.000
+Container.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Container.BorderSizePixel = 0
+Container.Position = UDim2.new(0.5, 0, 0.428278804, 0)
+Container.Size = UDim2.new(1, 0, 0.545445979, 0)
+Container.CanvasSize = UDim2.new(0, 0, 0, 0)
+Container.ScrollBarThickness = 5
+Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
+
+UIListLayout.Parent = Container
+UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+Button.Name = "Button"
+Button.Parent = MainFrame
+Button.AnchorPoint = Vector2.new(0.5, 0.5)
+Button.BackgroundColor3 = Color3.fromRGB(89, 255, 0)
+Button.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Button.BorderSizePixel = 0
+Button.Position = UDim2.new(0.49444443, 0, 0.902777791, 0)
+Button.Size = UDim2.new(0.48888889, 0, 0.127777785, 0)
+Button.Font = Enum.Font.SourceSansBold
+Button.Text = "KILL"
+Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Button.TextScaled = true
+Button.TextSize = 14.000
+Button.TextWrapped = true
+
+UICorner_2.Parent = Button
+
+Selected.Name = "Selected"
+Selected.Parent = MainFrame
+Selected.AnchorPoint = Vector2.new(0.5, 0.5)
+Selected.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Selected.BackgroundTransparency = 1.000
+Selected.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Selected.BorderSizePixel = 0
+Selected.Position = UDim2.new(0.499999225, 0, 0.751773775, 0)
+Selected.Size = UDim2.new(0.999997735, 0, 0.101544306, 0)
+Selected.Font = Enum.Font.SourceSans
+Selected.Text = "No player selected"
+Selected.TextColor3 = Color3.fromRGB(255, 255, 255)
+Selected.TextScaled = true
+Selected.TextSize = 14.000
+Selected.TextWrapped = true
+
+Template.Name = "Template"
+Template.Parent = MainFrame
+Template.AnchorPoint = Vector2.new(0.5, 0.5)
+Template.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Template.BackgroundTransparency = 1.000
+Template.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Template.BorderSizePixel = 0
+Template.Position = UDim2.new(0.5, 0, 0.148712516, 0)
+Template.Size = UDim2.new(1, 0, 0.297425032, 0)
+Template.Visible = false
+
+InnerFrame.Name = "InnerFrame"
+InnerFrame.Parent = Template
+InnerFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+InnerFrame.BackgroundColor3 = Color3.fromRGB(54, 54, 54)
+InnerFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+InnerFrame.BorderSizePixel = 0
+InnerFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+InnerFrame.Size = UDim2.new(0.961111128, 0, 0.949999869, 0)
+
+UICorner_3.Parent = InnerFrame
+
+TextButton.Parent = InnerFrame
+TextButton.AnchorPoint = Vector2.new(0.5, 0.5)
+TextButton.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextButton.BackgroundTransparency = 1.000
+TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.BorderSizePixel = 0
+TextButton.Position = UDim2.new(0.5, 0, 0.5, 0)
+TextButton.Size = UDim2.new(1, 0, 1, 0)
+TextButton.Font = Enum.Font.SourceSans
+TextButton.Text = ""
+TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+TextButton.TextSize = 14.000
+
+UICorner_4.Parent = TextButton
+
+PlayerName.Name = "PlayerName"
+PlayerName.Parent = InnerFrame
+PlayerName.AnchorPoint = Vector2.new(0.5, 0.5)
+PlayerName.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+PlayerName.BackgroundTransparency = 1.000
+PlayerName.BorderColor3 = Color3.fromRGB(0, 0, 0)
+PlayerName.BorderSizePixel = 0
+PlayerName.Position = UDim2.new(0.5, 0, 0.49999994, 0)
+PlayerName.Size = UDim2.new(1, 0, 0.764186919, 0)
+PlayerName.Font = Enum.Font.Arial
+PlayerName.Text = "C0dexDev"
+PlayerName.TextColor3 = Color3.fromRGB(255, 255, 255)
+PlayerName.TextScaled = true
+PlayerName.TextSize = 14.000
+PlayerName.TextWrapped = true
+
+-- Scripts:
+
+local function BJEBLPX_fake_script() -- MainFrame.Handler 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	--[[
+		Script improved by Gemini.
+		- Allows selection via GUI list or by clicking the character in-world.
+		- Uses events (PlayerAdded/PlayerRemoving) to manage the player list efficiently.
+		- Eliminates unnecessary while/repeat loops to reduce client-side load.
+		- Centralizes GUI update logic to run only when changes occur.
+		- Prevents memory leaks by properly disconnecting signals.
+	]]
+	
+	--// Services and Variables
+	local Players = game:GetService("Players")
+	local ReplicatedStorage = game:GetService("ReplicatedStorage")
+	local RunService = game:GetService("RunService")
+	
+	local LocalPlayer = Players.LocalPlayer
+	local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+	local Mouse = LocalPlayer:GetMouse() -- Added mouse for click detection
+	
+	--// Remotes
+	local Remotes = {
+		Attack = ReplicatedStorage:WaitForChild("AttackHandlerRemoteEvent"),
+		PounceAttack = ReplicatedStorage:WaitForChild("SpecialAttackRemoteEvent_PounceAttack"),
+		Ragdoll = ReplicatedStorage:WaitForChild("TrampleDamageHandlerRemoteEvent"),
+		Respawn = ReplicatedStorage:WaitForChild("SpawnAsCharacterRemoteFunction"),
+	}
+	
+	--// GUI
+	local Gui = PlayerGui:WaitForChild("SL")
+	local MainFrame = Gui:WaitForChild("MainFrame")
+	local Container = MainFrame.Container
+	local Template = MainFrame.Template
+	local Button = MainFrame.Button
+	local SelectedLabel = MainFrame.Selected
+	
+	--// Constants and State
+	local HEALTH_RESPAWN_THRESHOLD = 80 -- Health percentage to respawn at
+	local ATTACK_INTERVAL = 0.05 -- Time between attacks in the loop
+	
+	local COLORS = {
+		DEFAULT_TEMPLATE = Template.BackgroundColor3,
+		DEFAULT_BUTTON = Button.BackgroundColor3,
+		SELECTED_PLAYER = Color3.new(0.184314, 1, 0),
+		CANCEL_BUTTON = Color3.new(1, 0, 0.0156863)
+	}
+	
+	local playerConnections = {} -- Stores connections to prevent memory leaks
+	local selectedPlayer = nil
+	local isAttacking = false
+	
+	--// Functions
+	
+	-- Gets the local player's character display name
+	function getCharacterDisplayName()
+		local character = LocalPlayer.Character
+		local head = character and character:FindFirstChild("Head")
+		local nameGui = head and head:FindFirstChild("CharacterNameBillboardGui")
+		local textLabel = nameGui and nameGui:FindFirstChild("TextLabel")
+		return textLabel and textLabel.Text
+	end
+	
+	-- Invokes the player's respawn
+	function respawnPlayer()
+		local displayName = getCharacterDisplayName()
+		if not displayName then
+			warn("Could not get DisplayName to respawn.")
+			return
+		end
+		print("Respawning...")
+		Remotes.Respawn:InvokeServer(displayName)
+	end
+	
+	-- Updates the visual state of the attack/cancel button
+	function updateAttackButtonVisuals()
+		if isAttacking then
+			Button.BackgroundColor3 = COLORS.CANCEL_BUTTON
+			Button.Text = "CANCEL"
+		else
+			Button.BackgroundColor3 = COLORS.DEFAULT_BUTTON
+			Button.Text = "KILL"
+		end
+	end
+	
+	-- Updates the selection visuals (background color and label text)
+	function updateSelectionVisuals()
+		if selectedPlayer and selectedPlayer.Parent then
+			SelectedLabel.Text = selectedPlayer.Name .. " (" .. selectedPlayer.DisplayName .. ")"
+		else
+			SelectedLabel.Text = "No player selected"
+			selectedPlayer = nil -- Clear selection if the player is no longer valid
+		end
+	
+		for _, frame in ipairs(Container:GetChildren()) do
+			if frame:IsA("Frame") and frame.Name ~= "Template" then
+				if selectedPlayer and frame.Name == selectedPlayer.Name then
+					frame.BackgroundColor3 = COLORS.SELECTED_PLAYER
+				else
+					frame.BackgroundColor3 = COLORS.DEFAULT_TEMPLATE
+				end
+			end
+		end
+	end
+	
+	-- Adds a player frame to the list
+	function addPlayerFrame(player)
+		if player == LocalPlayer then return end -- Don't add ourselves to the list
+	
+		local newFrame = Template:Clone()
+		newFrame.Name = player.Name
+		newFrame.InnerFrame.PlayerName.Text = player.Name .. " (" .. player.DisplayName .. ")"
+		newFrame.LayoutOrder = string.byte(string.upper(string.sub(player.Name, 1, 1)))
+		newFrame.Visible = true
+		newFrame.Parent = Container
+	
+		-- Store the connection so we can disconnect it later
+		playerConnections[player] = newFrame.InnerFrame.TextButton.MouseButton1Click:Connect(function()
+			selectedPlayer = player
+			updateSelectionVisuals()
+		end)
+	end
+	
+	-- Removes a player frame from the list
+	function removePlayerFrame(player)
+		if playerConnections[player] then
+			playerConnections[player]:Disconnect()
+			playerConnections[player] = nil
+		end
+	
+		local frame = Container:FindFirstChild(player.Name)
+		if frame then
+			frame:Destroy()
+		end
+	
+		if selectedPlayer == player then
+			selectedPlayer = nil
+			updateSelectionVisuals()
+		end
+	end
+	
+	-- Checks if the conditions to continue the attack are met
+	function checkAttackConditions()
+		local localChar = LocalPlayer.Character
+		if not (selectedPlayer and selectedPlayer.Parent and localChar) then return false end
+	
+		local targetChar = selectedPlayer.Character
+		if not (targetChar and targetChar.Parent == workspace) then return false end
+	
+		local targetHum = targetChar:FindFirstChildOfClass("Humanoid")
+		if not (targetHum and targetHum.Health > 0) then return false end
+	
+		return true
+	end
+	
+	-- The main attack loop
+	function executeAttackLoop()
+		while isAttacking and checkAttackConditions() do
+			-- (Attack logic remains the same)
+			local localChar = LocalPlayer.Character
+			local targetChar = selectedPlayer.Character
+			local targetHum = targetChar and targetChar:FindFirstChildOfClass("Humanoid")
+			local ragdollPart = targetChar and targetChar:FindFirstChild("RagdollColliderParts") and targetChar.RagdollColliderParts:FindFirstChildWhichIsA("BasePart")
+	
+			local localHum = localChar:FindFirstChildOfClass("Humanoid")
+			if localHum and localHum.Health < localHum.MaxHealth * (HEALTH_RESPAWN_THRESHOLD / 100) then
+				respawnPlayer()
+				task.wait(0.2)
+			end
+	
+			if not (targetHum and ragdollPart) then break end
+	
+			pcall(Remotes.PounceAttack.FireServer, Remotes.PounceAttack, targetHum, ragdollPart)
+			task.wait(ATTACK_INTERVAL)
+			pcall(Remotes.PounceAttack.FireServer, Remotes.PounceAttack, targetHum, ragdollPart)
+			task.wait(ATTACK_INTERVAL)
+			pcall(Remotes.PounceAttack.FireServer, Remotes.PounceAttack, targetHum, ragdollPart)
+	
+			pcall(Remotes.Ragdoll.FireServer, Remotes.Ragdoll, targetHum, ragdollPart)
+			pcall(Remotes.Attack.FireServer, Remotes.Attack, targetHum)
+	
+			task.wait()
+		end
+	
+		isAttacking = false
+		updateAttackButtonVisuals()
+		print("Attack has finished.")
+	
+		if LocalPlayer.Character then
+			respawnPlayer()
+		end
+	end
+	
+	-- NEW: Handles clicks on characters in the workspace
+	function handleCharacterClick()
+		local target = Mouse.Target
+		if not target or not target.Parent then return end
+	
+		-- Find the character model and the associated player
+		local character = target:FindFirstAncestorOfClass("Model")
+		if not character or not character:FindFirstChildOfClass("Humanoid") then return end
+	
+		local player = Players:GetPlayerFromCharacter(character)
+	
+		-- Check if the clicked player is a valid target (i.e., in our GUI list)
+		if player and playerConnections[player] then
+			selectedPlayer = player
+			updateSelectionVisuals()
+			print("Selected " .. player.Name .. " by clicking their character.")
+		end
+	end
+	
+	
+	--// Event Connections and Initialization
+	
+	-- Main attack button
+	Button.MouseButton1Click:Connect(function()
+		if isAttacking then
+			isAttacking = false
+			updateAttackButtonVisuals()
+		elseif selectedPlayer then
+			isAttacking = true
+			updateAttackButtonVisuals()
+			task.spawn(executeAttackLoop)
+		else
+			warn("Attempted to attack without a selected target.")
+		end
+	end)
+	
+	-- NEW: Connect the character click handler
+	Mouse.Button1Down:Connect(handleCharacterClick)
+	
+	-- Player list management
+	Players.PlayerAdded:Connect(addPlayerFrame)
+	Players.PlayerRemoving:Connect(removePlayerFrame)
+	
+	-- Deselection handler
+	RunService.Heartbeat:Connect(function()
+		if selectedPlayer then
+			local char = selectedPlayer.Character
+			local hum = char and char:FindFirstChildOfClass("Humanoid")
+			if not hum or hum.Health <= 0 then
+				selectedPlayer = nil
+				updateSelectionVisuals()
+			end
+		end
+	end)
+	
+	
+	-- Initialization
+	for _, player in ipairs(Players:GetPlayers()) do
+		addPlayerFrame(player)
+	end
+	updateAttackButtonVisuals()
+	updateSelectionVisuals()
+	print("Selection and attack system initialized.")
+	task.spawn(function()
+		while task.wait() do
+			game:GetService("ReplicatedStorage"):WaitForChild("PlayerDamageSelfRemoteEvent"):FireServer(0/0)
+		end
+	end)
+end
+coroutine.wrap(BJEBLPX_fake_script)()
+local function JMHOKCP_fake_script() -- MainFrame.Drag 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	local UserInputService = game:GetService("UserInputService")
+	
+	local frame = script.Parent
+	local dragging = false
+	local dragStart
+	local startPos
+	
+	local function update(input)
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale, startPos.X.Offset + delta.X,
+			startPos.Y.Scale, startPos.Y.Offset + delta.Y
+		)
+	end
+	
+	frame.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+	
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+	
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			if dragging then
+				update(input)
+			end
+		end
+	end)
+	
+end
+coroutine.wrap(JMHOKCP_fake_script)()
