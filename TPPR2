@@ -1,0 +1,69 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local localPlayer = Players.LocalPlayer
+local char = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+local root = char:WaitForChild("HumanoidRootPart") -- mejor usar RootPart que la cabeza
+local destPos = Vector3.new(-6011, 1, 4281)
+
+local finish = false
+
+-- Función para buscar el jugador más cercano en el rango
+local function GetNearestPlayer()
+	local nearestPlayer = nil
+	local nearestDist = math.huge
+
+	for _, p in Players:GetPlayers() do
+		if p ~= localPlayer and p.Character and p.Character.PrimaryPart then
+			local pChar = p.Character
+			local charDistance = (root.Position - pChar.PrimaryPart.Position).Magnitude
+			local destDistance = (pChar.PrimaryPart.Position - destPos).Magnitude
+
+			if destDistance <= 250 and charDistance < nearestDist then
+				nearestPlayer = p
+				nearestDist = charDistance
+			end
+		end
+	end
+
+	return nearestPlayer
+end
+
+-- Teletransporte constante mientras busca
+task.spawn(function()
+	while task.wait() do
+		if finish then break end
+		root.CFrame = CFrame.new(destPos + Vector3.new(0,5,0))
+	end
+end)
+
+-- Esperar medio segundo antes de buscar
+task.wait(0.5)
+
+print("VICTIMSEARCH1")
+local victim
+repeat
+	victim = GetNearestPlayer()
+	task.wait(0.2)
+	print("VICTIMSEARCH")
+until victim
+
+print("FINISH")
+finish = true
+
+local targetChar = victim.Character or victim.CharacterAdded:Wait()
+local targetHum = targetChar:FindFirstChildOfClass("Humanoid")
+local ragdollPart = targetChar:FindFirstChild("RagdollColliderParts") and targetChar.RagdollColliderParts:FindFirstChildWhichIsA("BasePart")
+
+if targetHum and ragdollPart then
+	print("POUNCE")
+	ReplicatedStorage:WaitForChild("SpecialAttackRemoteEvent_PounceAttack"):FireServer(targetHum, ragdollPart)
+
+	repeat
+		ReplicatedStorage.SpecialAttackRemoteEvent_PounceAttack:FireServer(targetHum, ragdollPart)
+		task.wait()
+		print("POUNCE")
+	until (root.Position - targetChar.PrimaryPart.Position).Magnitude <= 10
+
+	ReplicatedStorage.SpecialAttackRemoteEvent_PounceAttack:FireServer("Cancel")
+end
