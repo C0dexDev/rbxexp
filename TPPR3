@@ -19,7 +19,7 @@ local function GetNearestPlayer()
 			local charDistance = (root.Position - pChar.PrimaryPart.Position).Magnitude
 			local destDistance = (pChar.PrimaryPart.Position - destPos).Magnitude
 
-			if destDistance <= 250 and charDistance < nearestDist then
+			if destDistance <= 500 and charDistance < nearestDist then
 				nearestPlayer = p
 				nearestDist = charDistance
 			end
