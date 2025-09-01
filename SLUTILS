@@ -1,0 +1,308 @@
+--[[
+    Script: SavannahLife_PRO_v1.2.lua
+    Autor: Tu Nombre & Asistente de Programación
+    Versión: PRO v1.2 - Lógica de Ataque Aislada
+]]
+
+--// Módulos y Servicios
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+
+--// Configuración Centralizada
+local Config = {
+    Attack = {
+        Multiplier = 6, 
+        MaxDistance = 20,
+        RepeatDelay = 0.1
+    },
+    IntelligentAttack = {
+        Enabled = true,
+        TargetLockDuration = 5,
+        PanicKeybind = Enum.KeyCode.T
+    },
+    Ragdoll = {
+        MaxDistance = 30,
+        Keybind = Enum.KeyCode.G
+    },
+    Player = {
+        RespawnKeybind = Enum.KeyCode.P,
+        AutoRespawnOnLowHealth = false,
+        MinHealth = 50,
+        InfiniteStamina = true,
+        InfiniteOxygen = true
+    },
+    Visuals = {
+        Fullbright = true,
+        PreventUnderwaterBlur = true
+    },
+    Utilities = {
+        GetUpKeybind = Enum.KeyCode.J
+    }
+}
+
+--// Estado Centralizado para el Ataque
+local AttackState = {
+    currentTarget = nil,
+    lastAttackTime = 0,
+    cancelSignal = false,
+    isFakeAttack = false -- NUEVO: La bandera para diferenciar ataques.
+}
+
+--// Módulos del Juego
+local RagdollHandler = require(ReplicatedStorage:WaitForChild("AnimalGameFrameworkShared"):WaitForChild("RagdollHandler"))
+
+--// Variables de Eventos Remotos
+local RemoteEvents = {
+    Attack = ReplicatedStorage:WaitForChild("AttackHandlerRemoteEvent"),
+    AntiLatch = ReplicatedStorage:WaitForChild("LatchedPlayersNotifyRemoteEvent"),
+    Respawn = ReplicatedStorage:WaitForChild("SpawnAsCharacterRemoteFunction"),
+    SaveStats = ReplicatedStorage:WaitForChild("SaveCharacterStatsRemoteEvent"),
+    Ragdoll = ReplicatedStorage:WaitForChild("TrampleDamageHandlerRemoteEvent")
+}
+
+--// Funciones de Utilidad
+function GetCharacter()
+    return Players.LocalPlayer.Character
+end
+
+function GetCharacterDisplayName()
+    local character = GetCharacter()
+    if not character then return nil end
+    local head = character:FindFirstChild("Head")
+    if not head then return nil end
+    local nameGui = head:FindFirstChild("CharacterNameBillboardGui")
+    if not nameGui then return nil end
+    local textLabel = nameGui:FindFirstChild("TextLabel")
+    if not textLabel then return nil end
+    return textLabel.Text
+end
+
+function GetAnimalName()
+    local character = GetCharacter()
+    if character then
+        return character:GetAttribute("AnimalName")
+    end
+    return nil
+end
+
+--// Funciones Principales
+
+function PrintKeybinds()
+    task.wait(0.1)
+    local keybindsToShow = {
+        {Key = Config.IntelligentAttack.PanicKeybind, Desc = "Cancelar Objetivo de Ataque"},
+        {Key = Config.Ragdoll.Keybind, Desc = "Activar Ragdoll en Área"},
+        {Key = Config.Player.RespawnKeybind, Desc = "Reaparición Instantánea"},
+        {Key = Config.Utilities.GetUpKeybind, Desc = "Levantarse del Ragdoll"}
+    }
+    local width = 45; local title = " Atajos de Teclado Configurados ";
+    local topBorder = "┌" .. string.rep("─", width - 2) .. "┐"; local bottomBorder = "└" .. string.rep("─", width - 2) .. "┘"; local middleBorder = "├" .. string.rep("─", width - 2) .. "┤"
+    local titlePadding = string.rep(" ", math.floor((width - 2 - #title) / 2)); local formattedTitle = "│" .. titlePadding .. title .. titlePadding
+    if #formattedTitle < width - 1 then formattedTitle = formattedTitle .. string.rep(" ", width - #formattedTitle - 1) end; formattedTitle = formattedTitle .. "│"
+    print(topBorder); print(formattedTitle); print(middleBorder)
+    for _, data in ipairs(keybindsToShow) do
+        local keyName = data.Key.Name; local lineContent = string.format("   %-10s : %s", keyName, data.Desc)
+        local linePadding = string.rep(" ", width - #lineContent - 2); print("│" .. lineContent .. linePadding .. "│")
+    end
+    print(bottomBorder)
+end
+
+function DisableUnderwaterEffects()
+    if not Config.Visuals.PreventUnderwaterBlur then return end
+    task.spawn(function()
+        local success, foundScript = pcall(function()
+            local playerScripts = Players.LocalPlayer:WaitForChild("PlayerScripts")
+            return playerScripts:WaitForChild("AnimalGameSharedCore"):WaitForChild("MapScripts"):WaitForChild("CameraUnderwaterDetection", 20)
+        end)
+        if success and foundScript then
+            foundScript:Destroy()
+            print("Módulo Visuales: Script de efectos de agua ELIMINADO.")
+        else
+            warn("Módulo Visuales: No se pudo encontrar el script de efectos bajo el agua para eliminarlo.")
+        end
+    end)
+end
+
+function SetupContinuousUpdates()
+    RunService.RenderStepped:Connect(function()
+        if Config.Visuals.Fullbright then
+            Lighting.Brightness = 2; Lighting.ClockTime = 14; Lighting.FogEnd = 100000; Lighting.GlobalShadows = false; Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+        end
+        if Config.Visuals.PreventUnderwaterBlur then
+            local camera = workspace.CurrentCamera
+            if camera then
+                camera:SetAttribute("IsUnderWater", false)
+            end
+        end
+        local character = GetCharacter()
+        if character then
+            if Config.Player.InfiniteStamina then
+                character:SetAttribute("Stamina", 100)
+            end
+            if Config.Player.InfiniteOxygen then
+                character:SetAttribute("Oxygen", 100)
+            end
+        end
+    end)
+    print("Módulo de Actualizaciones Continuas: Activado.")
+end
+
+function TriggerMassRagdoll()
+    local localCharacter = GetCharacter()
+    if not localCharacter then return end
+    local currentAnimal = GetAnimalName()
+    local allowedAnimals = {["Elephant"] = true, ["Rhino"] = true, ["Hippo"] = true, ["Impala"] = true}
+    if not currentAnimal or not allowedAnimals[currentAnimal] then
+        warn("Habilidad no disponible: El animal actual (" .. (currentAnimal or "Ninguno") .. ") no puede usar el ragdoll en área.")
+        return
+    end
+    print("Activando Ragdoll en área con " .. currentAnimal .. "...")
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player == Players.LocalPlayer then continue end
+        if Players.LocalPlayer.Team and player and player.Team == Players.LocalPlayer.Team then continue end
+        local targetCharacter = player.Character
+        if not targetCharacter or not targetCharacter.PrimaryPart then continue end
+        local distance = (localCharacter.PrimaryPart.Position - targetCharacter.PrimaryPart.Position).Magnitude
+        if distance < Config.Ragdoll.MaxDistance then
+            local humanoid = targetCharacter:FindFirstChildOfClass("Humanoid")
+            local ragdollColliders = targetCharacter:FindFirstChild("RagdollColliderParts")
+            if humanoid and ragdollColliders then
+                local firstPart = ragdollColliders:FindFirstChildWhichIsA("BasePart")
+                if firstPart then
+                    RemoteEvents.Ragdoll:FireServer(humanoid, firstPart)
+                    print("Ragdoll activado en: " .. player.Name)
+                end
+            end
+        end
+    end
+end
+
+function RespawnPlayer()
+    local displayName = GetCharacterDisplayName()
+    if not displayName then
+        warn("No se pudo reaparecer.")
+        return
+    end
+    print("Iniciando secuencia de reaparición...")
+    RemoteEvents.SaveStats:FireServer(displayName, "Stamina", 100)
+    RemoteEvents.Respawn:InvokeServer(displayName)
+end
+
+--[[
+    MODIFICADA
+    Ahora levanta la bandera antes de disparar un ataque falso.
+]]
+function SetupInputHandlers()
+    UserInputService.InputBegan:Connect(function(input, isTyping)
+        if isTyping then return end
+
+        if input.KeyCode == Config.Player.RespawnKeybind then
+            RespawnPlayer()
+        elseif input.KeyCode == Config.Ragdoll.Keybind then
+            TriggerMassRagdoll()
+        elseif input.KeyCode == Config.IntelligentAttack.PanicKeybind then
+            print("¡Pánico! Objetivo de ataque cancelado.")
+            AttackState.cancelSignal = true
+        elseif input.KeyCode == Config.Utilities.GetUpKeybind then
+            local character = GetCharacter()
+            if character and RagdollHandler.IsRagdolled(character) then
+                local humanoid = character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    print("Forzando estado 'GettingUp' para escapar del ragdoll.")
+                    humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+                end
+            end
+        elseif input.UserInputType == Enum.UserInputType.MouseButton1 then
+            if AttackState.currentTarget and AttackState.currentTarget.Parent then
+                local targetHumanoid = AttackState.currentTarget:FindFirstChildOfClass("Humanoid")
+                if targetHumanoid then
+                    print("Click izquierdo: Forzando ataque al objetivo fijado ("..AttackState.currentTarget.Name..")")
+                    -- 1. Levantamos la bandera para indicar que es un ataque nuestro.
+                    AttackState.isFakeAttack = true
+                    RemoteEvents.Attack:FireServer(targetHumanoid)
+                end
+            else
+                warn("Click izquierdo presionado, pero no hay ningún objetivo fijado.")
+            end
+        end
+    end)
+    task.spawn(function() while true do task.wait(0.4+(math.random())); RemoteEvents.AntiLatch:FireServer() end end)
+    task.spawn(function() while true do task.wait(1) if Config.Player.AutoRespawnOnLowHealth then local char=GetCharacter() if char then local hum=char:FindFirstChildOfClass("Humanoid") if hum and hum.Health<Config.Player.MinHealth and hum.Health>0 then RespawnPlayer() end end end end end)
+    print("Módulo de Entradas: Atajos de teclado y tareas de fondo activadas.")
+end
+
+--[[
+    MODIFICADA
+    Ahora comprueba la bandera para ignorar los ataques falsos.
+]]
+function SetupAttackMultiplier()
+    if not Config.IntelligentAttack.Enabled then return end
+    local isRepeating = false; local metatable = getrawmetatable(game); local originalNamecall = metatable.__namecall
+    local function spawnMultiplier(victim, attackArgs)
+        if isRepeating then return end; isRepeating = true
+        task.spawn(function()
+            for i=1, Config.Attack.Multiplier - 1 do
+                if AttackState.cancelSignal or not AttackState.currentTarget or victim ~= AttackState.currentTarget then break end
+                task.wait(Config.Attack.RepeatDelay)
+                local localChar = GetCharacter()
+                if not localChar or not victim.PrimaryPart then break end
+                local distance = (localChar.PrimaryPart.Position - victim.PrimaryPart.Position).Magnitude
+                if distance > Config.Attack.MaxDistance then break end
+                local victimPlayer = Players:GetPlayerFromCharacter(victim)
+                if Players.LocalPlayer.Team and victimPlayer and victimPlayer.Team == Players.LocalPlayer.Team then break end
+                RemoteEvents.Attack:FireServer(unpack(attackArgs))
+            end
+            isRepeating = false
+        end)
+    end
+    setreadonly(metatable, false)
+    metatable.__namecall = function(self, ...)
+        local method=getnamecallmethod(); local args={...}
+        if self == RemoteEvents.Attack and method == "FireServer" then
+            
+            -- 2. El hook comprueba la bandera ANTES que nada.
+            if AttackState.isFakeAttack then
+                AttackState.isFakeAttack = false -- La bajamos inmediatamente.
+                return originalNamecall(self, unpack(args)) -- Dejamos pasar el ataque sin procesar nada más.
+            end
+
+            -- Si la bandera era falsa, es un ataque REAL del juego. Se ejecuta toda la lógica inteligente.
+            local result = originalNamecall(self, unpack(args)); local humanoid = args[1]
+            if not humanoid or not humanoid.Parent then return result end;
+            local victim = humanoid.Parent
+            if AttackState.cancelSignal then AttackState.currentTarget = nil; AttackState.cancelSignal = false; return result end
+            local isNewTarget = not AttackState.currentTarget;
+            local isTargetExpired = AttackState.currentTarget and (os.clock()-AttackState.lastAttackTime > Config.IntelligentAttack.TargetLockDuration)
+            local isDifferentTarget = AttackState.currentTarget and victim~=AttackState.currentTarget
+            local playerFromTarget = Players:GetPlayerFromCharacter(victim)
+            if playerFromTarget and Players.LocalPlayer.Team ~= nil and playerFromTarget.Team == Players.LocalPlayer.Team then
+                warn("Tried to multiply attack on "..playerFromTarget.Name.." but that player is in your team. Cancelling and just sending a normal attack.")
+                isNewTarget = false; isDifferentTarget = false
+            end
+            if isNewTarget or (isDifferentTarget and isTargetExpired) then
+                print("Nuevo objetivo fijado:", victim.Name); AttackState.currentTarget = victim; AttackState.lastAttackTime = os.clock(); spawnMultiplier(victim, args)
+            elseif victim == AttackState.currentTarget then
+                AttackState.lastAttackTime = os.clock(); spawnMultiplier(victim, args)
+            elseif isDifferentTarget then
+                warn("Ataque multiplicado en espera. Objetivo principal ("..AttackState.currentTarget.Name..") sigue fijado.")
+            end
+            return result
+        end
+        return originalNamecall(self, unpack(args))
+    end
+    setreadonly(metatable, true)
+    print("Módulo de Combate: ¡Ataque Inteligente (Corregido) activado!")
+end
+
+--// Inicio del Script
+print("Cargando script SavannahLife PRO v1.2...")
+SetupContinuousUpdates()
+SetupInputHandlers()
+SetupAttackMultiplier()
+DisableUnderwaterEffects()
+print("¡Script cargado con éxito!")
+
+PrintKeybinds()
