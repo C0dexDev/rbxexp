@@ -1,0 +1,128 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local remote = game:GetService("ReplicatedStorage"):WaitForChild("ReplicateEffectsRemoteEvent")
+
+local function sendEmote(part, animalType, animalName, emoteName)
+	remote:FireServer(
+		"EmoteSound",
+		Vector3.new(0,0,0),
+		{
+			AnimalType = animalType,
+			AnimalName = animalName,
+			AnimalAge = "Adult",
+			PartRef = part,
+			EmoteName = emoteName,
+			PlayerName = LocalPlayer.Name
+		}
+	)
+end
+
+function godPlayer(victim)
+	if not victim or not victim:IsDescendantOf(Players) then return end
+	local localChar = LocalPlayer.Character
+	if not localChar then return end
+	local localRoot = localChar.PrimaryPart
+	if not localRoot then return end
+	local victimChar = victim.Character
+	if not victimChar then return end
+	local victimRoot = victimChar.PrimaryPart
+	if not victimRoot then return end
+	local distance = (localRoot.Position - victimRoot.Position).Magnitude
+	if distance > 100 then
+		print("Too far from victim!")
+		return
+	end
+
+	-- parámetros del "ritual"
+	local radius = 20
+	local height = 1
+	local speed = 3
+	local duration = 10
+	local angle = 0
+	local startTime = tick()
+	local finished = Instance.new("BindableEvent")
+	local connection
+
+	connection = RunService.RenderStepped:Connect(function(dt)
+		if tick() - startTime > duration then
+			connection:Disconnect()
+			finished:Fire()
+			return
+		end
+		if not victimRoot.Parent or not localRoot.Parent then
+			connection:Disconnect()
+			finished:Fire()
+			return
+		end
+		angle += speed * dt
+		local offset = Vector3.new(
+			math.cos(angle) * radius,
+			height,
+			math.sin(angle) * radius
+		)
+		localRoot.CFrame = CFrame.new(victimRoot.Position + offset, victimRoot.Position)
+	end)
+
+	local finishOrbit = false
+	task.spawn(function()
+		while not finishOrbit do
+			local args1 = {
+				"SpecialAttackSound",
+				localRoot.Position,
+				{
+					AnimalType = "Reptiles",
+					AnimalName = "Croc",
+					AnimalAge = "Adult",
+					PartRef = localChar:WaitForChild("Head")
+				}
+			}
+			remote:FireServer(unpack(args1))
+
+			local args2 = {
+				"SpecialAttackSound",
+				victimRoot.Position,
+				{
+					AnimalType = "Mammals",
+					AnimalName = "Elephant",
+					AnimalAge = "Adult",
+					PartRef = victimRoot
+				}
+			}
+			remote:FireServer(unpack(args2))
+			task.wait(.1)
+		end
+	end)
+
+	finished.Event:Wait()
+	finishOrbit = true
+
+	game:GetService("ReplicatedStorage"):WaitForChild("SpecialAttackRemoteEvent_ChargedAttack"):FireServer(victimChar.Humanoid,0/0)
+
+	-- ⚡️ elevar suavemente sobre la víctima
+	local startCFrame = localRoot.CFrame
+	local targetCFrame = CFrame.new(victimRoot.Position + Vector3.new(0, 15, 0), victimRoot.Position)
+	local liftTime = 2
+	local elapsed = 0
+
+	local liftConnection
+	liftConnection = RunService.RenderStepped:Connect(function(dt)
+		elapsed += dt
+		local alpha = math.clamp(elapsed / liftTime, 0, 1)
+		localRoot.CFrame = startCFrame:Lerp(targetCFrame, alpha)
+		if alpha >= 1 then
+			liftConnection:Disconnect()
+		end
+	end)
+
+	-- efecto sonoro mientras asciende
+	for i=0,25 do
+		sendEmote(victimRoot,"Mammals","Elephant","LongTrumpet")
+		task.wait()
+	end
+end
+
+-- ejemplo
+godPlayer(game.Players["C0dexDev"])
