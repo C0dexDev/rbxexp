@@ -1,0 +1,126 @@
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+
+local remote = game:GetService("ReplicatedStorage"):WaitForChild("ReplicateEffectsRemoteEvent")
+
+local function sendEmoteAtPosition(position, animalType, animalName, emoteName)
+	-- Creamos un attachment temporal en la posición
+	local attachment = Instance.new("Attachment")
+	attachment.WorldPosition = position
+	attachment.Parent = workspace.Terrain  -- se puede poner en Terrain para que no interfiera con nada
+
+	remote:FireServer(
+		"EmoteSound",
+		position,
+		{
+			AnimalType = animalType,
+			AnimalName = animalName,
+			AnimalAge = "Adult",
+			PartRef = attachment,
+			EmoteName = emoteName,
+			PlayerName = LocalPlayer.Name
+		}
+	)
+
+	-- lo destruimos después de un rato para evitar fugas
+	game:GetService("Debris"):AddItem(attachment, 2)
+end
+
+function godPlayer(victim)
+	if not victim or not victim:IsDescendantOf(Players) then return end
+	local localChar = LocalPlayer.Character
+	if not localChar then return end
+	local localRoot = localChar.PrimaryPart
+	if not localRoot then return end
+	local victimChar = victim.Character
+	if not victimChar then return end
+	local victimRoot = victimChar.PrimaryPart
+	if not victimRoot then return end
+	local distance = (localRoot.Position - victimRoot.Position).Magnitude
+	if distance > 100 then
+		print("Too far from victim!")
+		return
+	end
+
+	local radius = 20
+	local height = 1
+	local speed = 3
+	local duration = 10
+	local angle = 0
+	local startTime = tick()
+	local finished = Instance.new("BindableEvent")
+	local connection
+
+	connection = RunService.RenderStepped:Connect(function(dt)
+		if tick() - startTime > duration then
+			connection:Disconnect()
+			finished:Fire()
+			return
+		end
+		if not victimRoot.Parent or not localRoot.Parent then
+			connection:Disconnect()
+			finished:Fire()
+			return
+		end
+		angle += speed * dt
+		local offset = Vector3.new(
+			math.cos(angle) * radius,
+			height,
+			math.sin(angle) * radius
+		)
+		localRoot.CFrame = CFrame.new(victimRoot.Position + offset, victimRoot.Position)
+	end)
+
+	local finishOrbit = false
+	task.spawn(function()
+		while not finishOrbit do
+			-- sonidos originales
+			remote:FireServer("SpecialAttackSound", localRoot.Position, {
+				AnimalType = "Reptiles",
+				AnimalName = "Croc",
+				AnimalAge = "Adult",
+				PartRef = localChar:WaitForChild("Head")
+			})
+
+			remote:FireServer("SpecialAttackSound", victimRoot.Position, {
+				AnimalType = "Mammals",
+				AnimalName = "Elephant",
+				AnimalAge = "Adult",
+				PartRef = victimRoot
+			})
+
+			-- risas de hienas en posiciones aleatorias alrededor
+			local randomAngle = math.random() * math.pi * 2
+			local laughRadius = math.random(25, 40)-- radio de las hienas
+			local pos = victimRoot.Position + Vector3.new(
+				math.cos(randomAngle) * laughRadius,
+				2, -- altura
+				math.sin(randomAngle) * laughRadius
+			)
+			sendEmoteAtPosition(pos, "Mammals", "Hyena", "Laugh")
+
+			task.wait(.1)
+		end
+	end)
+
+	finished.Event:Wait()
+	finishOrbit = true
+	localRoot.CFrame = CFrame.new(victimRoot.Position)
+	game:GetService("ReplicatedStorage"):WaitForChild("SpecialAttackRemoteEvent_ChargedAttack"):FireServer(victimChar.Humanoid,0/0)
+
+	for i=0,25 do
+		remote:FireServer("EmoteSound", victimRoot.Position, {
+			AnimalType = "Mammals",
+			AnimalName = "Elephant",
+			AnimalAge = "Adult",
+			PartRef = victimRoot,
+			EmoteName = "LongTrumpet",
+			PlayerName = LocalPlayer.Name
+		})
+		task.wait()
+	end
+end
+
+-- ejemplo
+godPlayer(game.Players["C0dexDev"])
