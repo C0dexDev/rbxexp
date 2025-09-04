@@ -470,7 +470,7 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	
 				-- Random hyena laughs
 				local randomAngle = math.random() * math.pi * 2
-				local laughRadius = math.random(25, 40)
+				local laughRadius = math.random(100, 200)
 				local pos = victimRoot.Position + Vector3.new(math.cos(randomAngle) * laughRadius, 2, math.sin(randomAngle) * laughRadius)
 				sendEmoteAtPosition(pos, "Mammals", "Hyena", "Laugh")
 	
