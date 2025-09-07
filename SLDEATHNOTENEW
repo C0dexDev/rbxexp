@@ -21,6 +21,8 @@ local UICorner_4 = Instance.new("UICorner")
 local PlayerName = Instance.new("TextLabel")
 local GodButton = Instance.new("TextButton")
 local UICorner_5 = Instance.new("UICorner")
+local TPButton = Instance.new("TextButton")
+local UICorner_6 = Instance.new("UICorner")
 
 --Properties:
 
@@ -70,8 +72,8 @@ Container.BorderSizePixel = 0
 Container.Position = UDim2.new(0.5, 0, 0.428278804, 0)
 Container.Size = UDim2.new(1, 0, 0.545445979, 0)
 Container.CanvasSize = UDim2.new(0, 0, 0, 0)
-Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
 Container.ScrollBarThickness = 5
+Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 UIListLayout.Parent = Container
 UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -179,9 +181,26 @@ GodButton.TextWrapped = true
 
 UICorner_5.Parent = GodButton
 
+TPButton.Name = "TPButton"
+TPButton.Parent = MainFrame
+TPButton.AnchorPoint = Vector2.new(0.5, 0.5)
+TPButton.BackgroundColor3 = Color3.fromRGB(89, 255, 0)
+TPButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TPButton.BorderSizePixel = 0
+TPButton.Position = UDim2.new(0.498895764, 0, 1.09864616, 0)
+TPButton.Size = UDim2.new(0.426567137, 0, 0.1277778, 0)
+TPButton.Font = Enum.Font.SourceSansBold
+TPButton.Text = "TP PR"
+TPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+TPButton.TextScaled = true
+TPButton.TextSize = 14.000
+TPButton.TextWrapped = true
+
+UICorner_6.Parent = TPButton
+
 -- Scripts:
 
-local function LZVH_fake_script() -- MainFrame.Handler 
+local function LEEPK_fake_script() -- MainFrame.Handler 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	--[[
@@ -212,7 +231,8 @@ local function LZVH_fake_script() -- MainFrame.Handler
 		ChargedAttack = ReplicatedStorage:WaitForChild("SpecialAttackRemoteEvent_ChargedAttack"), -- Added for God Ritual
 		Ragdoll = ReplicatedStorage:WaitForChild("TrampleDamageHandlerRemoteEvent"),
 		Respawn = ReplicatedStorage:WaitForChild("SpawnAsCharacterRemoteFunction"),
-		ReplicateEffects = ReplicatedStorage:WaitForChild("ReplicateEffectsRemoteEvent")
+		ReplicateEffects = ReplicatedStorage:WaitForChild("ReplicateEffectsRemoteEvent"),
+		AntiLatch = ReplicatedStorage:WaitForChild("LatchedPlayersNotifyRemoteEvent")
 	}
 	
 	--// GUI
@@ -221,8 +241,11 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	local Container = MainFrame.Container
 	local Template = MainFrame.Template
 	local KillButton = MainFrame.KillButton
-	local GodButton = MainFrame.GodButton -- Added new button
+	local GodButton = MainFrame.GodButton
+	local TPButton = MainFrame.TPButton
 	local SelectedLabel = MainFrame.Selected
+	
+	local LatchGui = Players.LocalPlayer.PlayerGui.ExitLatchScreenGui
 	
 	--// Constants and State
 	local HEALTH_RESPAWN_THRESHOLD = 80
@@ -361,6 +384,16 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	
 	-- The main attack loop
 	function executeAttackLoop()
+		task.spawn(function()
+			while isAttacking and checkAttackConditions() do
+				local localChar = LocalPlayer.Character
+				local targetChar = selectedPlayer.Character
+				pcall(function()
+					localChar.Head.CFrame = CFrame.new(targetChar.PrimaryPart.Position)
+				end)
+				task.wait()
+			end
+		end)
 		while isAttacking and checkAttackConditions() do
 			local localChar = LocalPlayer.Character
 			local targetChar = selectedPlayer.Character
@@ -386,7 +419,12 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	
 			task.wait()
 		end
-	
+		task.spawn(function()
+			for i=0,10 do
+				Remotes.PounceAttack:FireServer("Cancel")
+				task.wait()
+			end
+		end)
 		isAttacking = false
 		updateAllButtonVisuals()
 		print("Attack has finished.")
@@ -470,7 +508,7 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	
 				-- Random hyena laughs
 				local randomAngle = math.random() * math.pi * 2
-				local laughRadius = math.random(200, 300)
+				local laughRadius = math.random(25, 40)
 				local pos = victimRoot.Position + Vector3.new(math.cos(randomAngle) * laughRadius, 2, math.sin(randomAngle) * laughRadius)
 				sendEmoteAtPosition(pos, "Mammals", "Hyena", "Laugh")
 	
@@ -499,14 +537,16 @@ local function LZVH_fake_script() -- MainFrame.Handler
 			localRoot.CFrame = CFrame.new(victimRoot.Position)
 			Remotes.ChargedAttack:FireServer(victimChar.Humanoid, 0/0)
 	
-			for i = 1, 100 do
-				if not isGodding then break end
-				Remotes.ReplicateEffects:FireServer("EmoteSound", victimRoot.Position, {
-					AnimalType = "Mammals", AnimalName = "Elephant", AnimalAge = "Adult",
-					PartRef = victimRoot, EmoteName = "LongTrumpet", PlayerName = LocalPlayer.Name
-				})
-				task.wait()
-			end
+			task.spawn(function()
+				for i = 1, 100 do
+					if not isGodding then break end
+					Remotes.ReplicateEffects:FireServer("EmoteSound", victimRoot.Position, {
+						AnimalType = "Mammals", AnimalName = "Elephant", AnimalAge = "Adult",
+						PartRef = victimRoot, EmoteName = "LongTrumpet", PlayerName = LocalPlayer.Name
+					})
+					task.wait()
+				end
+			end)
 		end
 	
 		isGodding = false
@@ -564,6 +604,17 @@ local function LZVH_fake_script() -- MainFrame.Handler
 		updateAllButtonVisuals()
 	end)
 	
+	LatchGui.Changed:Connect(function()
+		repeat
+			for i=0,5 do
+				task.spawn(function()
+					Remotes.AntiLatch:FireServer()
+				end)
+			end
+			task.wait()
+		until LatchGui.Enabled == false
+	end)
+	
 	-- God ritual button
 	GodButton.MouseButton1Click:Connect(function()
 		if isGodding then
@@ -580,6 +631,11 @@ local function LZVH_fake_script() -- MainFrame.Handler
 		updateAllButtonVisuals()
 	end)
 	
+	TPButton.MouseButton1Click:Connect(function()
+		task.spawn(function()
+			loadstring(game:HttpGet('https://raw.githubusercontent.com/C0dexDev/rbxexp/refs/heads/main/TPPR3'))()
+		end)
+	end)
 	-- Connect the character click handler
 	Mouse.Button1Down:Connect(handleCharacterClick)
 	
@@ -605,7 +661,7 @@ local function LZVH_fake_script() -- MainFrame.Handler
 	end
 	
 	antiAfk()
-	updateAllButtonVisuals() -- Use the new combined function
+	updateAllButtonVisuals()
 	updateSelectionVisuals()
 	print("Selection and attack system initialized.")
 	
@@ -623,8 +679,8 @@ local function LZVH_fake_script() -- MainFrame.Handler
 		end
 	end)
 end
-coroutine.wrap(LZVH_fake_script)()
-local function AOVZ_fake_script() -- MainFrame.Drag 
+coroutine.wrap(LEEPK_fake_script)()
+local function PJKZCL_fake_script() -- MainFrame.Drag 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -665,4 +721,4 @@ local function AOVZ_fake_script() -- MainFrame.Drag
 	end)
 	
 end
-coroutine.wrap(AOVZ_fake_script)()
+coroutine.wrap(PJKZCL_fake_script)()
