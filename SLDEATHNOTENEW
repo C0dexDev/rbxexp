@@ -200,7 +200,7 @@ UICorner_6.Parent = TPButton
 
 -- Scripts:
 
-local function LEEPK_fake_script() -- MainFrame.Handler 
+local function PNIBENA_fake_script() -- MainFrame.Handler 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	--[[
@@ -223,7 +223,9 @@ local function LEEPK_fake_script() -- MainFrame.Handler
 	local LocalPlayer = Players.LocalPlayer
 	local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 	local Mouse = LocalPlayer:GetMouse()
-	
+	--//Modules
+	local RagdollHandler = require(ReplicatedStorage:WaitForChild("AnimalGameFrameworkShared"):WaitForChild("RagdollHandler"))
+	local ControlsHandler = require(LocalPlayer:WaitForChild("PlayerScripts"):WaitForChild("PlayerModule")):GetControls()
 	--// Remotes
 	local Remotes = {
 		Attack = ReplicatedStorage:WaitForChild("AttackHandlerRemoteEvent"),
@@ -668,6 +670,18 @@ local function LEEPK_fake_script() -- MainFrame.Handler
 	task.spawn(function()
 		while task.wait() do
 			pcall(function()
+				local character = Players.LocalPlayer.Character
+				if character and RagdollHandler.IsRagdolled(character) then
+					character.PrimaryPart.Anchored = false
+					ControlsHandler:Enable()
+					local humanoid = character:FindFirstChildOfClass("Humanoid")
+					if humanoid then
+						humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+					end
+				end
+	
+			end)
+			pcall(function()
 				ReplicatedStorage:WaitForChild("PlayerDamageSelfRemoteEvent"):FireServer(0/0)
 				if workspace:FindFirstChild("MapAssets") then
 					workspace.MapAssets:Destroy()
@@ -679,8 +693,8 @@ local function LEEPK_fake_script() -- MainFrame.Handler
 		end
 	end)
 end
-coroutine.wrap(LEEPK_fake_script)()
-local function PJKZCL_fake_script() -- MainFrame.Drag 
+coroutine.wrap(PNIBENA_fake_script)()
+local function XQLL_fake_script() -- MainFrame.Drag 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -721,4 +735,4 @@ local function PJKZCL_fake_script() -- MainFrame.Drag
 	end)
 	
 end
-coroutine.wrap(PJKZCL_fake_script)()
+coroutine.wrap(XQLL_fake_script)()
