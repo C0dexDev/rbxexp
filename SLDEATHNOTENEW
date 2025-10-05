@@ -200,7 +200,7 @@ UICorner_6.Parent = TPButton
 
 -- Scripts:
 
-local function OLMWSEC_fake_script() -- MainFrame.Handler 
+local function YRDS_fake_script() -- MainFrame.Handler 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	--[[
@@ -386,12 +386,21 @@ local function OLMWSEC_fake_script() -- MainFrame.Handler
 	
 	-- The main attack loop
 	function executeAttackLoop()
+		task.spawn(function()
+			while isAttacking and checkAttackConditions() do
+				local localChar = LocalPlayer.Character
+				local targetChar = selectedPlayer.Character
+				pcall(function()
+					localChar.Head.CFrame = CFrame.new(targetChar.PrimaryPart.Position)
+				end)
+				task.wait()
+			end
+		end)
 		while isAttacking and checkAttackConditions() do
 			local localChar = LocalPlayer.Character
 			local targetChar = selectedPlayer.Character
 			local targetHum = targetChar and targetChar:FindFirstChildOfClass("Humanoid")
 			local ragdollPart = targetChar and targetChar:FindFirstChild("RagdollColliderParts") and targetChar.RagdollColliderParts:FindFirstChildWhichIsA("BasePart")
-	
 			local localHum = localChar:FindFirstChildOfClass("Humanoid")
 			if localHum and localHum.Health < localHum.MaxHealth * (HEALTH_RESPAWN_THRESHOLD / 100) then
 				respawnPlayer()
@@ -399,7 +408,7 @@ local function OLMWSEC_fake_script() -- MainFrame.Handler
 			end
 	
 			if not (targetHum and ragdollPart) then break end
-	
+			
 			pcall(Remotes.PounceAttack.FireServer, Remotes.PounceAttack, targetHum, ragdollPart)
 			task.wait(ATTACK_INTERVAL)
 			pcall(Remotes.PounceAttack.FireServer, Remotes.PounceAttack, targetHum, ragdollPart)
@@ -683,8 +692,8 @@ local function OLMWSEC_fake_script() -- MainFrame.Handler
 		end
 	end)
 end
-coroutine.wrap(OLMWSEC_fake_script)()
-local function IGRKNV_fake_script() -- MainFrame.Drag 
+coroutine.wrap(YRDS_fake_script)()
+local function LJGMO_fake_script() -- MainFrame.Drag 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -725,4 +734,4 @@ local function IGRKNV_fake_script() -- MainFrame.Drag
 	end)
 	
 end
-coroutine.wrap(IGRKNV_fake_script)()
+coroutine.wrap(LJGMO_fake_script)()
