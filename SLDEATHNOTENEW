@@ -72,7 +72,7 @@ Container.BorderSizePixel = 0
 Container.Position = UDim2.new(0.5, 0, 0.428278804, 0)
 Container.Size = UDim2.new(1, 0, 0.545445979, 0)
 Container.CanvasSize = UDim2.new(0, 0, 0, 0)
-Container.ScrollBarThickness = 5
+Container.ScrollBarThickness = 8
 Container.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 UIListLayout.Parent = Container
@@ -200,7 +200,7 @@ UICorner_6.Parent = TPButton
 
 -- Scripts:
 
-local function PNIBENA_fake_script() -- MainFrame.Handler 
+local function OLMWSEC_fake_script() -- MainFrame.Handler 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	--[[
@@ -386,16 +386,6 @@ local function PNIBENA_fake_script() -- MainFrame.Handler
 	
 	-- The main attack loop
 	function executeAttackLoop()
-		task.spawn(function()
-			while isAttacking and checkAttackConditions() do
-				local localChar = LocalPlayer.Character
-				local targetChar = selectedPlayer.Character
-				pcall(function()
-					localChar.Head.CFrame = CFrame.new(targetChar.PrimaryPart.Position)
-				end)
-				task.wait()
-			end
-		end)
 		while isAttacking and checkAttackConditions() do
 			local localChar = LocalPlayer.Character
 			local targetChar = selectedPlayer.Character
@@ -693,8 +683,8 @@ local function PNIBENA_fake_script() -- MainFrame.Handler
 		end
 	end)
 end
-coroutine.wrap(PNIBENA_fake_script)()
-local function XQLL_fake_script() -- MainFrame.Drag 
+coroutine.wrap(OLMWSEC_fake_script)()
+local function IGRKNV_fake_script() -- MainFrame.Drag 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local UserInputService = game:GetService("UserInputService")
@@ -735,4 +725,4 @@ local function XQLL_fake_script() -- MainFrame.Drag
 	end)
 	
 end
-coroutine.wrap(XQLL_fake_script)()
+coroutine.wrap(IGRKNV_fake_script)()
